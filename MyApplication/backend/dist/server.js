@@ -7,7 +7,7 @@ import { WebSocketRelayServer } from './websocket/relayServer.js';
 import { DatabaseStorage } from './services/dbStorage.js';
 const app = express();
 const httpServer = createServer(app);
-// Initialize Store
+// Initialize In-Memory Store
 DatabaseStorage.init();
 // JSON Body Parser
 app.use(express.json({ limit: '10mb' }));
@@ -18,8 +18,9 @@ app.use('/api', apiRouter);
 // Initialize Native WebSocket Encrypted Relay Server
 new WebSocketRelayServer(httpServer);
 const PORT = parseInt(env.PORT, 10) || 5000;
-if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
-    httpServer.listen(PORT, () => {
+// Listen on PORT 5000 for standard server deployments (EC2, local, PM2)
+if (!process.env.VERCEL) {
+    httpServer.listen(PORT, '0.0.0.0', () => {
         console.log(`====================================================`);
         console.log(`🚀 BlindHire AI Backend Running on Port ${PORT}`);
         console.log(`🔒 Security: Helmet, CORS, Rate-Limiting Enabled`);
