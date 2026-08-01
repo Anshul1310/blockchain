@@ -4,9 +4,13 @@ import { env } from './config/env.js';
 import { setupSecurityMiddleware } from './middleware/security.js';
 import { apiRouter } from './routes/api.js';
 import { WebSocketRelayServer } from './websocket/relayServer.js';
+import { DatabaseStorage } from './services/dbStorage.js';
 
 const app = express();
 const httpServer = createServer(app);
+
+// Initialize Persistent File Database (backend/data/db.json)
+DatabaseStorage.init();
 
 // JSON Body Parser
 app.use(express.json({ limit: '10mb' }));
@@ -26,6 +30,7 @@ httpServer.listen(PORT, () => {
   console.log(`====================================================`);
   console.log(`🚀 BlindHire AI Backend Running on Port ${PORT}`);
   console.log(`🔒 Security: Helmet, CORS, Rate-Limiting Enabled`);
+  console.log(`💾 Database: Persistent Storage Ready (data/db.json)`);
   console.log(`🌐 WebSockets: E2E Encrypted Relay Ready at /ws`);
   console.log(`====================================================`);
 });

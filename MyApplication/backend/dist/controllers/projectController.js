@@ -1,14 +1,11 @@
 import { IPFSService } from '../services/ipfsService.js';
-// Memory stores
-const liveProjects = [];
-const liveProposals = [];
-const liveMessages = [];
+import { DatabaseStorage } from '../services/dbStorage.js';
 export class ProjectController {
     /**
      * GET /api/projects
      */
     static getProjects(req, res) {
-        return res.json({ projects: liveProjects });
+        return res.json({ projects: DatabaseStorage.getProjects() });
     }
     /**
      * POST /api/projects
@@ -17,19 +14,20 @@ export class ProjectController {
         try {
             const projectPayload = req.body;
             const cid = await IPFSService.uploadJSON(projectPayload);
+            const budgetValue = projectPayload.budgetEth ? `${projectPayload.budgetEth}` : '0.01';
             const newProject = {
                 id: `proj-${Date.now()}`,
                 clientWallet: (projectPayload.clientWallet || '0x10429d68A7677F20e3C5181707AfC438Ac896DDa').toLowerCase(),
                 title: projectPayload.title || 'Untitled Project',
                 description: projectPayload.description || '',
-                budgetEth: projectPayload.budgetEth || '0.05',
+                budgetEth: budgetValue,
                 deadlineDays: projectPayload.deadlineDays || 14,
                 requiredSkills: projectPayload.skills || [],
                 projectCid: cid,
                 createdAt: Date.now(),
                 status: 'open',
             };
-            liveProjects.unshift(newProject);
+            DatabaseStorage.addProject(newProject);
             return res.json({ success: true, project: newProject, cid });
         }
         catch (err) {
@@ -45,18 +43,22 @@ export class ProjectController {
             const proposalPayload = req.body;
             const cid = await IPFSService.uploadJSON(proposalPayload);
             const freelancerWallet = (proposalPayload.freelancerWallet || '0x10429d68A7677F20e3C5181707AfC438Ac896DDa').toLowerCase();
+            const project = DatabaseStorage.getProjects().find((p) => p.id === proposalPayload.projectId);
+            const requestedEth = proposalPayload.requestedBudgetEth
+                ? `${proposalPayload.requestedBudgetEth}`
+                : (project ? project.budgetEth : '0.01');
             const newProposal = {
                 id: `prop-${Date.now()}`,
                 projectId: proposalPayload.projectId,
                 freelancerWallet,
                 coverLetter: proposalPayload.coverLetter,
-                requestedEth: proposalPayload.requestedBudgetEth || '0.05',
+                requestedEth,
                 estimatedDays: proposalPayload.estimatedDays || 7,
                 proposalCid: cid,
                 status: 'submitted',
                 createdAt: Date.now(),
             };
-            liveProposals.unshift(newProposal);
+            DatabaseStorage.addProposal(newProposal);
             return res.json({ success: true, proposal: newProposal, cid });
         }
         catch (err) {
@@ -66,11 +68,10 @@ export class ProjectController {
     }
     /**
      * GET /api/proposals
-     * Query proposals by freelancer or projectId
      */
     static getProposals(req, res) {
         const { freelancer, projectId } = req.query;
-        let result = [...liveProposals];
+        let result = [...DatabaseStorage.getProposals()];
         if (freelancer) {
             const target = freelancer.toLowerCase();
             result = result.filter((p) => p.freelancerWallet.toLowerCase() === target);
@@ -85,33 +86,100 @@ export class ProjectController {
      */
     static getProjectProposals(req, res) {
         const { id } = req.params;
-        const projectProposals = liveProposals.filter((p) => p.projectId === id);
+        const projectProposals = DatabaseStorage.getProposals().filter((p) => p.projectId === id);
         return res.json({ proposals: projectProposals });
     }
     /**
      * POST /api/proposals/:id/accept
+     * Client accepts proposal & locks exact project budget in escrow
      */
     static acceptProposal(req, res) {
         const { id } = req.params;
-        const proposal = liveProposals.find((p) => p.id === id);
+        const proposal = DatabaseStorage.getProposals().find((p) => p.id === id);
         if (!proposal) {
             return res.status(404).json({ error: 'Proposal not found' });
         }
-        proposal.status = 'accepted';
-        const project = liveProjects.find((p) => p.id === proposal.projectId);
+        DatabaseStorage.updateProposalStatus(id, 'accepted');
+        const project = DatabaseStorage.getProjects().find((p) => p.id === proposal.projectId);
+        const clientWallet = project ? project.clientWallet.toLowerCase() : '0x10429d68a7677f20e3c5181707afc438ac896dda';
+        const exactAmountEth = proposal.requestedEth || (project ? project.budgetEth : '0.01');
         if (project) {
-            project.status = 'in_progress';
-            project.assignedFreelancer = proposal.freelancerWallet;
+            DatabaseStorage.updateProjectStatus(proposal.projectId, 'in_progress', proposal.freelancerWallet);
         }
+        const newEscrow = {
+            id: `escrow-${Date.now()}`,
+            projectId: proposal.projectId,
+            projectTitle: project ? project.title : 'Booked Project Escrow',
+            clientWallet: clientWallet,
+            freelancerWallet: proposal.freelancerWallet.toLowerCase(),
+            amountEth: exactAmountEth,
+            status: 'in_progress',
+            currentMilestone: 'Milestone 1: Development In Progress',
+            deliverableCid: null,
+            contractAddress: '0x8ae17d69F226d6322281eb171E367c4Be45cf67c',
+            createdAt: Date.now(),
+        };
+        DatabaseStorage.addEscrow(newEscrow);
         return res.json({
             success: true,
             proposal,
-            message: `Proposal accepted! Order booked with freelancer ${proposal.freelancerWallet}`,
+            escrow: newEscrow,
+            message: `Order Booked! Escrow initialized for ${exactAmountEth} ETH between Client (${clientWallet}) and Freelancer (${proposal.freelancerWallet})`,
+        });
+    }
+    /**
+     * GET /api/escrows
+     */
+    static getEscrows(req, res) {
+        const { wallet } = req.query;
+        const allEscrows = DatabaseStorage.getEscrows();
+        if (!wallet) {
+            return res.json({ escrows: allEscrows });
+        }
+        const target = wallet.toLowerCase();
+        const matched = allEscrows.filter((e) => e.clientWallet.toLowerCase() === target || e.freelancerWallet.toLowerCase() === target);
+        return res.json({ escrows: matched.length > 0 ? matched : allEscrows });
+    }
+    /**
+     * POST /api/escrows/:id/deliver
+     */
+    static submitEscrowDeliverable(req, res) {
+        const { id } = req.params;
+        const { deliverableCid } = req.body;
+        const escrow = DatabaseStorage.getEscrows().find((e) => e.id === id);
+        if (!escrow) {
+            return res.status(404).json({ error: 'Escrow contract not found' });
+        }
+        escrow.deliverableCid = deliverableCid;
+        escrow.status = 'delivered_pending_approval';
+        escrow.currentMilestone = 'Milestone Deliverable Submitted - Pending Client Approval & ETH Release';
+        DatabaseStorage.save();
+        return res.json({
+            success: true,
+            escrow,
+            message: `Deliverable IPFS CID ${deliverableCid} submitted! Client can now approve and release ETH payout.`,
+        });
+    }
+    /**
+     * POST /api/escrows/:id/release
+     */
+    static releaseEscrowPayment(req, res) {
+        const { id } = req.params;
+        const escrow = DatabaseStorage.getEscrows().find((e) => e.id === id);
+        if (!escrow) {
+            return res.status(404).json({ error: 'Escrow contract not found' });
+        }
+        escrow.status = 'completed';
+        escrow.currentMilestone = 'Completed - ETH Milestone Payment Released to Freelancer Wallet';
+        DatabaseStorage.save();
+        return res.json({
+            success: true,
+            escrow,
+            message: `${escrow.amountEth} ETH released to freelancer wallet ${escrow.freelancerWallet} on Sepolia Smart Contract!`,
         });
     }
     /**
      * POST /api/messages
-     * Store encrypted chat message between sender and recipient
      */
     static async sendMessage(req, res) {
         try {
@@ -127,7 +195,7 @@ export class ProjectController {
                 encryptedCid: encryptedCid || `QmEnc${Date.now()}`,
                 timestamp: Date.now(),
             };
-            liveMessages.push(msg);
+            DatabaseStorage.addMessage(msg);
             return res.json({ success: true, message: msg });
         }
         catch (err) {
@@ -137,16 +205,16 @@ export class ProjectController {
     }
     /**
      * GET /api/messages
-     * Fetch chat history between two wallet addresses
      */
     static getMessages(req, res) {
         const { wallet1, wallet2 } = req.query;
+        const allMessages = DatabaseStorage.getMessages();
         if (!wallet1) {
-            return res.json({ messages: liveMessages });
+            return res.json({ messages: allMessages });
         }
         const w1 = wallet1.toLowerCase();
         const w2 = wallet2 ? wallet2.toLowerCase() : null;
-        const chatHistory = liveMessages.filter((m) => {
+        const chatHistory = allMessages.filter((m) => {
             const isW1Sender = m.senderWallet === w1;
             const isW1Recipient = m.recipientWallet === w1;
             if (!w2) {
@@ -162,12 +230,10 @@ export class ProjectController {
      * POST /api/reset or POST /api/purge
      */
     static resetAllData(req, res) {
-        liveProjects.length = 0;
-        liveProposals.length = 0;
-        liveMessages.length = 0;
+        DatabaseStorage.purge();
         return res.json({
             success: true,
-            message: 'All projects, proposals, chat history, and memory stores purged.',
+            message: 'All projects, proposals, chat history, escrows, and persistent file stores purged.',
             timestamp: new Date().toISOString(),
         });
     }

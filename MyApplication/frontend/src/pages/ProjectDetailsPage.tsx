@@ -49,7 +49,7 @@ export const ProjectDetailsPage: React.FC = () => {
       const found = projRes.data.projects?.find((p) => p.id === id);
       if (found) {
         setProject(found);
-        setRequestedEth(found.budgetEth || '0.05');
+        setRequestedEth(found.budgetEth || '0.02');
       }
 
       // 2. Fetch Applicants/Proposals for this project

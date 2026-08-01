@@ -20,6 +20,10 @@ apiRouter.get('/proposals', ProjectController.getProposals);
 apiRouter.get('/projects/:id/proposals', ProjectController.getProjectProposals);
 apiRouter.post('/proposals', ProjectController.submitProposal);
 apiRouter.post('/proposals/:id/accept', ProjectController.acceptProposal);
+// Escrows & Payment Release Routes
+apiRouter.get('/escrows', ProjectController.getEscrows);
+apiRouter.post('/escrows/:id/deliver', ProjectController.submitEscrowDeliverable);
+apiRouter.post('/escrows/:id/release', ProjectController.releaseEscrowPayment);
 // Chat & Encrypted Messaging Routes
 apiRouter.get('/messages', ProjectController.getMessages);
 apiRouter.post('/messages', ProjectController.sendMessage);
