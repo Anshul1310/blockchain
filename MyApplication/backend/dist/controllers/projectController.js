@@ -231,9 +231,10 @@ export class ProjectController {
      */
     static resetAllData(req, res) {
         DatabaseStorage.purge();
+        IPFSService.purge();
         return res.json({
             success: true,
-            message: 'All projects, proposals, chat history, escrows, and persistent file stores purged.',
+            message: 'All in-memory project listings, applicant proposals, chat messages, escrows, and IPFS caches purged successfully.',
             timestamp: new Date().toISOString(),
         });
     }

@@ -5,9 +5,15 @@ export interface IPFSResponse {
   cid: string;
 }
 
+const PUBLIC_IPFS_GATEWAYS = [
+  'https://ipfs.io/ipfs/',
+  'https://gateway.pinata.cloud/ipfs/',
+  'https://cloudflare-ipfs.com/ipfs/',
+];
+
 export class IPFSClient {
   /**
-   * Upload any structured JSON payload (Profile, Project, Proposal, Review, Deliverable) to IPFS.
+   * Upload structured JSON payload (Profile, Project, Proposal, Deliverable) to IPFS.
    * Returns IPFS CID hash (e.g. Qm...).
    */
   static async uploadJSON(data: Record<string, any>): Promise<string> {
@@ -24,15 +30,33 @@ export class IPFSClient {
   }
 
   /**
-   * Fetch JSON content from IPFS by CID reference.
+   * Fetch JSON document from IPFS by CID reference.
+   * Queries backend relay & public decentralized IPFS HTTP Gateways.
    */
   static async fetchJSON<T = any>(cid: string): Promise<T> {
+    // 1. Try backend IPFS relay controller
     try {
       const response = await api.get<{ cid: string; data: T }>(`/ipfs/${cid}`);
-      return response.data.data;
-    } catch (err: any) {
-      console.error(`IPFS Fetch Error for CID ${cid}:`, err);
-      throw new Error(`Failed to fetch IPFS document for CID: ${cid}`);
+      if (response.data?.data) {
+        return response.data.data;
+      }
+    } catch (err) {
+      // Fallback to public gateways below
     }
+
+    // 2. Query public decentralized IPFS HTTP Gateways directly
+    for (const gatewayUrl of PUBLIC_IPFS_GATEWAYS) {
+      try {
+        const res = await fetch(`${gatewayUrl}${cid}`);
+        if (res.ok) {
+          const data = await res.json();
+          return data as T;
+        }
+      } catch (e) {
+        // Try next gateway
+      }
+    }
+
+    throw new Error(`Failed to resolve IPFS document for CID: ${cid}`);
   }
 }

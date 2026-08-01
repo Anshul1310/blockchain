@@ -30,3 +30,4 @@ apiRouter.post('/messages', ProjectController.sendMessage);
 // Purge / Reset Route (Wipes all stored data)
 apiRouter.post('/reset', ProjectController.resetAllData);
 apiRouter.post('/purge', ProjectController.resetAllData);
+apiRouter.post('/clear', ProjectController.resetAllData);
