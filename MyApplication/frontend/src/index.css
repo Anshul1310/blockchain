@@ -4,72 +4,73 @@
 
 @layer base {
   body {
-    background-color: #070A11;
+    background-color: #0F172A;
     color: #F8FAFC;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     background-image: 
-      radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.12) 0px, transparent 50%),
-      radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.12) 0px, transparent 50%),
-      radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.08) 0px, transparent 50%);
+      radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.12) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(37, 99, 235, 0.15) 0px, transparent 50%),
+      radial-gradient(at 50% 100%, rgba(15, 23, 42, 0.95) 0px, transparent 50%);
     background-attachment: fixed;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     letter-spacing: -0.02em;
   }
 }
 
-/* Premium Glassmorphism Cards */
+/* Modern Professional Clean Marketplace Cards */
 .glass-card {
-  background: rgba(15, 21, 34, 0.65);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+  background: rgba(30, 41, 59, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
 }
 
 .glass-card-hover {
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.25s ease-in-out;
 }
 
 .glass-card-hover:hover {
-  background: rgba(22, 30, 48, 0.8);
-  border-color: rgba(139, 92, 246, 0.4);
+  background: rgba(30, 41, 59, 0.95);
+  border-color: rgba(16, 185, 129, 0.4);
   box-shadow: 
-    0 12px 40px -10px rgba(139, 92, 246, 0.25),
-    0 0 20px 0 rgba(6, 182, 212, 0.15);
-  transform: translateY(-3px);
+    0 10px 30px -5px rgba(16, 185, 129, 0.15),
+    0 0 15px 0 rgba(37, 99, 235, 0.15);
+  transform: translateY(-2px);
 }
 
-/* Neon Gradient Text Utilities */
-.text-gradient-purple {
-  background: linear-gradient(135deg, #C4B5FD 0%, #8B5CF6 40%, #EC4899 100%);
+/* Clean Professional Gradient Text Utilities */
+.text-gradient-green {
+  background: linear-gradient(135deg, #34D399 0%, #10B981 50%, #059669 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-.text-gradient-cyan {
-  background: linear-gradient(135deg, #7DD3FC 0%, #06B6D4 50%, #10B981 100%);
+.text-gradient-blue {
+  background: linear-gradient(135deg, #60A5FA 0%, #2563EB 50%, #1D4ED8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-.text-gradient-gold {
-  background: linear-gradient(135deg, #FDE047 0%, #F59E0B 50%, #D97706 100%);
+.text-gradient-emerald-blue {
+  background: linear-gradient(135deg, #34D399 0%, #10B981 40%, #2563EB 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-/* Glowing Border Elements */
-.border-glow-purple {
-  border: 1px solid rgba(139, 92, 246, 0.4);
-  box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+/* Clean Accent Borders */
+.border-glow-emerald {
+  border: 1px solid rgba(16, 185, 129, 0.5);
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
 }
 
-.border-glow-cyan {
-  border: 1px solid rgba(6, 182, 212, 0.4);
-  box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
+.border-glow-blue {
+  border: 1px solid rgba(37, 99, 235, 0.5);
+  box-shadow: 0 0 15px rgba(37, 99, 235, 0.2);
 }
 
 /* Custom Scrollbar */
@@ -79,14 +80,14 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #070A11;
+  background: #0F172A;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1E293B;
-  border-radius: 9999px;
+  background: #334155;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #10B981;
 }

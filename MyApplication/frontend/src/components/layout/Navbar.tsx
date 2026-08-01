@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ShieldCheck, Wallet, Bot, PlusCircle, MessageSquare, LayoutDashboard, Search, Menu, X, UserCheck, Briefcase, FileText } from 'lucide-react';
+import { ShieldCheck, Wallet, Bot, PlusCircle, MessageSquare, LayoutDashboard, Search, Menu, X, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
 import { WalletModal } from '../common/WalletModal';
@@ -13,7 +13,6 @@ export const Navbar: React.FC = () => {
 
   const shortenAddress = (addr: string) => `${addr.substring(0, 6)}...${addr.substring(addr.length - 4)}`;
 
-  // Role-based navigation item filtering
   const navItems = userRole === 'client'
     ? [
         { label: 'My Listed Jobs', path: '/dashboard', icon: FileText },
@@ -27,74 +26,80 @@ export const Navbar: React.FC = () => {
         { label: 'Messages', path: '/messages', icon: MessageSquare },
       ];
 
+  const hasSession = isConnected && Boolean(walletAddress);
+
   return (
     <>
-      <header className="sticky top-0 z-50 glass-card border-b border-white/10 bg-[#090D16]/80 backdrop-blur-md">
+      <header className="sticky top-0 z-50 bg-[#0F172A]/90 border-b border-slate-800 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
+          <div className="flex items-center justify-between h-18">
             
             {/* Brand Logo */}
             <Link to="/" className="flex items-center gap-3 group">
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-purple-600 to-cyan-500 p-0.5 flex items-center justify-center shadow-glow-purple group-hover:scale-105 transition-transform">
-                <div className="w-full h-full bg-[#090D16] rounded-[10px] flex items-center justify-center">
-                  <ShieldCheck className="w-6 h-6 text-purple-400 group-hover:text-cyan-400 transition-colors" />
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-emerald-500 to-blue-600 p-0.5 flex items-center justify-center group-hover:scale-105 transition-transform shadow-sm">
+                <div className="w-full h-full bg-[#0F172A] rounded-[9px] flex items-center justify-center">
+                  <ShieldCheck className="w-5 h-5 text-emerald-400 group-hover:text-blue-400 transition-colors" />
                 </div>
               </div>
               <div className="flex flex-col">
                 <span className="font-heading font-extrabold text-xl tracking-tight text-white flex items-center gap-1.5">
-                  BlindHire <span className="text-gradient-purple">AI</span>
+                  BlindHire <span className="text-gradient-green">AI</span>
                 </span>
-                <span className="text-[10px] text-slate-400 font-mono tracking-wider uppercase">
-                  {userRole === 'client' ? 'Client Workspace' : 'Freelancer Workspace'}
-                </span>
+                {hasSession && (
+                  <span className="text-[10px] text-emerald-400 font-mono tracking-wider uppercase font-semibold">
+                    {userRole === 'client' ? 'Client Workspace' : 'Freelancer Workspace'}
+                  </span>
+                )}
               </div>
             </Link>
 
-            {/* Desktop Navigation Links */}
-            <nav className="hidden md:flex items-center gap-1">
-              {navItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = location.pathname === item.path;
-                return (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
-                      isActive
-                        ? 'text-white font-semibold'
-                        : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
-                    }`}
-                  >
-                    <Icon className={`w-4 h-4 ${isActive ? 'text-purple-400' : 'text-slate-400'}`} />
-                    {item.label}
-                    {isActive && (
-                      <motion.div
-                        layoutId="activeNavIndicator"
-                        className="absolute bottom-0 left-2 right-2 h-0.5 bg-gradient-to-r from-purple-500 to-cyan-400 rounded-full"
-                        transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                      />
-                    )}
-                  </Link>
-                );
-              })}
-            </nav>
+            {/* Desktop Navigation Links (ONLY VISIBLE WHEN CONNECTED / LOGGED IN) */}
+            {hasSession && (
+              <nav className="hidden md:flex items-center gap-1">
+                {navItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = location.pathname === item.path;
+                  return (
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
+                        isActive
+                          ? 'text-white font-semibold bg-slate-800/80'
+                          : 'text-slate-300 hover:text-white hover:bg-slate-800/40'
+                      }`}
+                    >
+                      <Icon className={`w-4 h-4 ${isActive ? 'text-emerald-400' : 'text-slate-400'}`} />
+                      {item.label}
+                      {isActive && (
+                        <motion.div
+                          layoutId="activeNavIndicator"
+                          className="absolute bottom-0 left-2 right-2 h-0.5 bg-gradient-to-r from-emerald-400 to-blue-500 rounded-full"
+                          transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                        />
+                      )}
+                    </Link>
+                  );
+                })}
+              </nav>
+            )}
 
-            {/* Wallet Actions & Role Pill */}
+            {/* Wallet Action Button */}
             <div className="hidden sm:flex items-center gap-3">
-              {isConnected && walletAddress ? (
+              {hasSession ? (
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setWalletModalOpen(true)}
-                    className="px-3.5 py-2 rounded-xl glass-card border border-purple-500/30 hover:border-purple-400 flex items-center gap-2.5 transition-all"
+                    className="px-3.5 py-2 rounded-xl bg-slate-800 border border-emerald-500/30 hover:border-emerald-400 flex items-center gap-2.5 transition-all text-xs font-mono text-white"
                   >
                     <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="font-mono text-xs font-semibold text-slate-200">
-                      {shortenAddress(walletAddress)} ({userRole === 'client' ? 'Client' : 'Freelancer'})
-                    </span>
+                    <span>{shortenAddress(walletAddress!)}</span>
                   </button>
+
                   <button
                     onClick={logout}
-                    className="px-3 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all"
+                    className="p-2 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-400 hover:text-white hover:border-rose-500/50 transition-colors text-xs font-medium"
+                    title="Disconnect Wallet"
                   >
                     Disconnect
                   </button>
@@ -102,7 +107,7 @@ export const Navbar: React.FC = () => {
               ) : (
                 <button
                   onClick={() => setWalletModalOpen(true)}
-                  className="px-5 py-2.5 rounded-xl font-heading font-semibold text-sm text-white bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 shadow-glow-purple hover:shadow-glow-cyan transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2"
+                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-400 hover:to-blue-500 text-white text-sm font-semibold shadow-md flex items-center gap-2 transition-all"
                 >
                   <Wallet className="w-4 h-4" />
                   Connect Wallet
@@ -110,11 +115,11 @@ export const Navbar: React.FC = () => {
               )}
             </div>
 
-            {/* Mobile Menu Button */}
-            <div className="flex md:hidden">
+            {/* Mobile Menu Toggle Button */}
+            <div className="md:hidden flex items-center gap-2">
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/5"
+                className="p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white focus:outline-none"
               >
                 {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
@@ -123,50 +128,54 @@ export const Navbar: React.FC = () => {
           </div>
         </div>
 
-        {/* Mobile Drawer */}
+        {/* Mobile Navigation Drawer */}
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden border-t border-white/10 bg-[#090D16]/95 backdrop-blur-xl px-4 pt-3 pb-6 space-y-2"
+              className="md:hidden border-t border-slate-800 bg-[#0F172A] px-4 pt-3 pb-6 space-y-3"
             >
-              {navItems.map((item) => {
+              {hasSession && navItems.map((item) => {
                 const Icon = item.icon;
+                const isActive = location.pathname === item.path;
                 return (
                   <Link
                     key={item.path}
                     to={item.path}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium text-slate-300 hover:text-white hover:bg-white/5"
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium ${
+                      isActive ? 'bg-emerald-500/10 text-emerald-400 font-semibold' : 'text-slate-300 hover:bg-slate-800'
+                    }`}
                   >
-                    <Icon className="w-5 h-5 text-purple-400" />
+                    <Icon className="w-4 h-4" />
                     {item.label}
                   </Link>
                 );
               })}
-              <div className="pt-4 border-t border-white/10">
-                {isConnected && walletAddress ? (
+
+              <div className="pt-2 border-t border-slate-800">
+                {!hasSession ? (
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      setWalletModalOpen(true);
+                    }}
+                    className="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-blue-600 text-white font-semibold text-sm flex items-center justify-center gap-2"
+                  >
+                    <Wallet className="w-4 h-4" />
+                    Connect Wallet
+                  </button>
+                ) : (
                   <button
                     onClick={() => {
                       logout();
                       setMobileMenuOpen(false);
                     }}
-                    className="w-full py-3 rounded-xl text-center font-medium text-rose-400 bg-rose-500/10 border border-rose-500/20"
+                    className="w-full py-2.5 rounded-xl bg-rose-500/10 text-rose-400 font-semibold text-sm border border-rose-500/20"
                   >
-                    Disconnect ({shortenAddress(walletAddress)})
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => {
-                      setWalletModalOpen(true);
-                      setMobileMenuOpen(false);
-                    }}
-                    className="w-full py-3 rounded-xl font-heading font-semibold text-white bg-gradient-to-r from-purple-600 to-cyan-600 shadow-glow-purple flex items-center justify-center gap-2"
-                  >
-                    <Wallet className="w-5 h-5" />
-                    Connect Wallet
+                    Disconnect ({shortenAddress(walletAddress!)})
                   </button>
                 )}
               </div>
@@ -175,7 +184,7 @@ export const Navbar: React.FC = () => {
         </AnimatePresence>
       </header>
 
-      {/* Wallet Modal */}
+      {/* Wallet Login Role Modal */}
       <WalletModal isOpen={walletModalOpen} onClose={() => setWalletModalOpen(false)} />
     </>
   );

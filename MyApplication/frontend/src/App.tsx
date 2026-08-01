@@ -2,7 +2,6 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Navbar } from './components/layout/Navbar';
-import { Footer } from './components/layout/Footer';
 import { LandingPage } from './pages/LandingPage';
 import { HomePage } from './pages/HomePage';
 import { ProjectsPage } from './pages/ProjectsPage';
@@ -18,7 +17,7 @@ const AppRoutes: React.FC = () => {
   const { isConnected, login } = useAuth();
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#090D16] text-slate-100 selection:bg-purple-500 selection:text-white">
+    <div className="min-h-screen flex flex-col bg-[#0F172A] text-slate-100 selection:bg-emerald-500 selection:text-white">
       <Navbar />
 
       <main className="flex-1">
@@ -35,8 +34,6 @@ const AppRoutes: React.FC = () => {
           <Route path="/escrow" element={<EscrowPage />} />
         </Routes>
       </main>
-
-      <Footer />
     </div>
   );
 };

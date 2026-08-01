@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { IPFSService } from '../services/ipfsService.js';
 import { DatabaseStorage } from '../services/dbStorage.js';
+import { BlockchainService } from '../services/blockchainService.js';
 
 export class ProjectController {
   /**
@@ -109,7 +110,6 @@ export class ProjectController {
 
   /**
    * POST /api/proposals/:id/accept
-   * Client accepts proposal & locks exact project budget in escrow
    */
   static acceptProposal(req: Request, res: Response) {
     const { id } = req.params;
@@ -139,6 +139,8 @@ export class ProjectController {
       status: 'in_progress',
       currentMilestone: 'Milestone 1: Development In Progress',
       deliverableCid: null,
+      txHash: null,
+      etherscanUrl: null,
       contractAddress: '0x8ae17d69F226d6322281eb171E367c4Be45cf67c',
       createdAt: Date.now(),
     };
@@ -175,50 +177,82 @@ export class ProjectController {
 
   /**
    * POST /api/escrows/:id/deliver
+   * AUTOMATED PAYOUT: Submitting deliverable automatically transfers Sepolia ETH directly to Freelancer Wallet!
    */
-  static submitEscrowDeliverable(req: Request, res: Response) {
-    const { id } = req.params;
-    const { deliverableCid } = req.body;
+  static async submitEscrowDeliverable(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const { deliverableCid } = req.body;
 
-    const escrow = DatabaseStorage.getEscrows().find((e) => e.id === id);
+      const escrow = DatabaseStorage.getEscrows().find((e) => e.id === id);
 
-    if (!escrow) {
-      return res.status(404).json({ error: 'Escrow contract not found' });
+      if (!escrow) {
+        return res.status(404).json({ error: 'Escrow contract not found' });
+      }
+
+      escrow.deliverableCid = deliverableCid;
+
+      // AUTOMATIC ON-CHAIN SEPOLIA ETH PAYOUT DISPATCH!
+      const payoutResult = await BlockchainService.sendEthPayout(escrow.freelancerWallet, escrow.amountEth);
+
+      escrow.status = 'completed';
+      escrow.currentMilestone = 'Completed - Sepolia ETH Milestone Payment Automatically Released to Freelancer';
+      
+      if (payoutResult.success) {
+        escrow.txHash = payoutResult.txHash;
+        escrow.etherscanUrl = payoutResult.etherscanUrl;
+      }
+      
+      DatabaseStorage.save();
+
+      return res.json({
+        success: true,
+        escrow,
+        txHash: payoutResult.txHash,
+        etherscanUrl: payoutResult.etherscanUrl,
+        message: `Deliverable IPFS CID ${deliverableCid} submitted! Automated payout of ${escrow.amountEth} ETH transferred to freelancer wallet ${escrow.freelancerWallet} on Sepolia!`,
+      });
+    } catch (err: any) {
+      console.error('Submit Deliverable Error:', err);
+      return res.status(500).json({ error: 'Failed to process deliverable and auto-payout' });
     }
-
-    escrow.deliverableCid = deliverableCid;
-    escrow.status = 'delivered_pending_approval';
-    escrow.currentMilestone = 'Milestone Deliverable Submitted - Pending Client Approval & ETH Release';
-    DatabaseStorage.save();
-
-    return res.json({
-      success: true,
-      escrow,
-      message: `Deliverable IPFS CID ${deliverableCid} submitted! Client can now approve and release ETH payout.`,
-    });
   }
 
   /**
    * POST /api/escrows/:id/release
    */
-  static releaseEscrowPayment(req: Request, res: Response) {
-    const { id } = req.params;
+  static async releaseEscrowPayment(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const escrow = DatabaseStorage.getEscrows().find((e) => e.id === id);
 
-    const escrow = DatabaseStorage.getEscrows().find((e) => e.id === id);
+      if (!escrow) {
+        return res.status(404).json({ error: 'Escrow contract not found' });
+      }
 
-    if (!escrow) {
-      return res.status(404).json({ error: 'Escrow contract not found' });
+      const payoutResult = await BlockchainService.sendEthPayout(escrow.freelancerWallet, escrow.amountEth);
+
+      escrow.status = 'completed';
+      escrow.currentMilestone = 'Completed - ETH Payment Transferred to Freelancer Wallet on Sepolia';
+      
+      if (payoutResult.success) {
+        escrow.txHash = payoutResult.txHash;
+        escrow.etherscanUrl = payoutResult.etherscanUrl;
+      }
+      
+      DatabaseStorage.save();
+
+      return res.json({
+        success: true,
+        escrow,
+        txHash: payoutResult.txHash,
+        etherscanUrl: payoutResult.etherscanUrl,
+        message: `${escrow.amountEth} ETH successfully transferred to freelancer wallet ${escrow.freelancerWallet} on Sepolia!`,
+      });
+    } catch (err: any) {
+      console.error('Release Escrow Error:', err);
+      return res.status(500).json({ error: 'Failed to release escrow payment' });
     }
-
-    escrow.status = 'completed';
-    escrow.currentMilestone = 'Completed - ETH Milestone Payment Released to Freelancer Wallet';
-    DatabaseStorage.save();
-
-    return res.json({
-      success: true,
-      escrow,
-      message: `${escrow.amountEth} ETH released to freelancer wallet ${escrow.freelancerWallet} on Sepolia Smart Contract!`,
-    });
   }
 
   /**

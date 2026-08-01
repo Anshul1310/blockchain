@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShieldCheck, DollarSign, CheckCircle2, Upload, Inbox, Loader2 } from 'lucide-react';
+import { ShieldCheck, DollarSign, CheckCircle2, Upload, Inbox, Loader2, ExternalLink } from 'lucide-react';
 import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
 import { Badge } from '../components/common/Badge';
@@ -19,6 +19,8 @@ interface EscrowContract {
   status: string;
   currentMilestone: string;
   deliverableCid?: string | null;
+  txHash?: string | null;
+  etherscanUrl?: string | null;
   contractAddress: string;
   createdAt: number;
 }
@@ -89,9 +91,11 @@ export const EscrowPage: React.FC = () => {
         console.warn('Smart contract transaction notice:', txErr);
       }
 
-      await api.post(`/escrows/${escrowId}/release`);
+      const releaseRes = await api.post<{ success: boolean; txHash?: string; etherscanUrl?: string }>(`/escrows/${escrowId}/release`);
 
-      alert(`✅ Success! ${amountEth} ETH has been released from Smart Contract Escrow directly to Freelancer Wallet ${freelancerWallet}!`);
+      const txInfo = releaseRes.data?.txHash ? `\n\nSepolia Tx Hash: ${releaseRes.data.txHash}` : '';
+      alert(`✅ Success! ${amountEth} ETH has been transferred on Sepolia directly to Freelancer Wallet ${freelancerWallet}!${txInfo}`);
+      
       fetchEscrows();
     } catch (err: any) {
       console.error('ETH release failed:', err);
@@ -108,7 +112,7 @@ export const EscrowPage: React.FC = () => {
       
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
         <div>
-          <Badge variant="purple" icon={<ShieldCheck className="w-3.5 h-3.5" />}>
+          <Badge variant="emerald" icon={<ShieldCheck className="w-3.5 h-3.5" />}>
             Non-Custodial Sepolia Escrow
           </Badge>
           <h1 className="text-3xl font-heading font-bold text-white mt-2">
@@ -120,7 +124,7 @@ export const EscrowPage: React.FC = () => {
 
       {isLoading ? (
         <div className="py-16 text-center space-y-3">
-          <Loader2 className="w-8 h-8 animate-spin text-purple-400 mx-auto" />
+          <Loader2 className="w-8 h-8 animate-spin text-emerald-400 mx-auto" />
           <p className="text-xs font-mono text-slate-400">Fetching on-chain escrow contracts...</p>
         </div>
       ) : escrows.length === 0 ? (
@@ -212,15 +216,26 @@ export const EscrowPage: React.FC = () => {
                   </div>
                 )}
 
-                {/* COMPLETED BANNER */}
+                {/* COMPLETED BANNER WITH SEPOLIA ETHERSCAN LINK */}
                 {isCompleted && (
-                  <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-center space-y-1">
+                  <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-center space-y-2">
                     <div className="flex items-center justify-center gap-2 text-emerald-400 font-bold text-sm">
-                      <CheckCircle2 className="w-5 h-5" /> Milestone Payout Released!
+                      <CheckCircle2 className="w-5 h-5" /> Real Sepolia ETH Payment Transferred!
                     </div>
                     <p className="text-xs text-slate-300 font-mono">
-                      {escrow.amountEth} ETH credited to Freelancer wallet ({shortenAddress(escrow.freelancerWallet)}) on Sepolia Smart Contract.
+                      {escrow.amountEth} ETH transferred directly to Freelancer wallet ({shortenAddress(escrow.freelancerWallet)}).
                     </p>
+                    {escrow.txHash && (
+                      <a
+                        href={escrow.etherscanUrl || `https://sepolia.etherscan.io/tx/${escrow.txHash}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1.5 text-xs text-cyan-400 hover:underline font-mono pt-1"
+                      >
+                        <span>View Live Sepolia Etherscan Tx: {escrow.txHash.substring(0, 14)}...</span>
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </a>
+                    )}
                   </div>
                 )}
 
