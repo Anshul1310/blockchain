@@ -12,13 +12,13 @@ export const FreelancersPage: React.FC = () => {
   const [profileModalOpen, setProfileModalOpen] = useState(false);
   const { isConnected, walletAddress } = useAuth();
 
-  // Dynamic profiles list (Empty by default until users register on-chain via ProfileModal)
+  
   const freelancers: any[] = [];
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
       
-      {/* Header Banner */}
+      
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
         <div className="space-y-2 text-left">
           <Badge variant="cyan" icon={<ShieldCheck className="w-3.5 h-3.5" />}>
@@ -37,7 +37,7 @@ export const FreelancersPage: React.FC = () => {
         </Button>
       </div>
 
-      {/* Search Input */}
+      
       <div className="relative max-w-xl mx-auto">
         <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-purple-400" />
         <input
@@ -49,7 +49,7 @@ export const FreelancersPage: React.FC = () => {
         />
       </div>
 
-      {/* Empty State vs Dynamic Candidates */}
+      
       {freelancers.length === 0 ? (
         <Card className="p-12 text-center space-y-6 border border-purple-500/20 max-w-2xl mx-auto">
           <div className="w-16 h-16 rounded-2xl bg-purple-500/10 border border-purple-500/30 text-purple-400 mx-auto flex items-center justify-center shadow-glow-purple">
@@ -111,7 +111,7 @@ export const FreelancersPage: React.FC = () => {
         </div>
       )}
 
-      {/* Profile Creation Modal */}
+      
       <ProfileModal isOpen={profileModalOpen} onClose={() => setProfileModalOpen(false)} />
 
     </div>

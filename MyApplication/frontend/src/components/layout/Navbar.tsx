@@ -34,7 +34,7 @@ export const Navbar: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-18">
             
-            {/* Brand Logo */}
+            
             <Link to="/" className="flex items-center gap-3 group">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-emerald-500 to-blue-600 p-0.5 flex items-center justify-center group-hover:scale-105 transition-transform shadow-sm">
                 <div className="w-full h-full bg-[#0F172A] rounded-[9px] flex items-center justify-center">
@@ -53,7 +53,7 @@ export const Navbar: React.FC = () => {
               </div>
             </Link>
 
-            {/* Desktop Navigation Links (ONLY VISIBLE WHEN CONNECTED / LOGGED IN) */}
+            
             {hasSession && (
               <nav className="hidden md:flex items-center gap-1">
                 {navItems.map((item) => {
@@ -84,7 +84,7 @@ export const Navbar: React.FC = () => {
               </nav>
             )}
 
-            {/* Wallet Action Button */}
+            
             <div className="hidden sm:flex items-center gap-3">
               {hasSession ? (
                 <div className="flex items-center gap-2">
@@ -115,7 +115,7 @@ export const Navbar: React.FC = () => {
               )}
             </div>
 
-            {/* Mobile Menu Toggle Button */}
+            
             <div className="md:hidden flex items-center gap-2">
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -128,7 +128,7 @@ export const Navbar: React.FC = () => {
           </div>
         </div>
 
-        {/* Mobile Navigation Drawer */}
+        
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div
@@ -184,7 +184,7 @@ export const Navbar: React.FC = () => {
         </AnimatePresence>
       </header>
 
-      {/* Wallet Login Role Modal */}
+      
       <WalletModal isOpen={walletModalOpen} onClose={() => setWalletModalOpen(false)} />
     </>
   );

@@ -1,15 +1,15 @@
-// SPDX-License-Identifier: MIT
+
 pragma solidity ^0.8.24;
 
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-/**
- * @title BlindHireEscrow
- * @notice Production-ready decentralized freelancing marketplace escrow smart contract.
- * @dev Stores only IPFS CID references, milestone escrows, deposit/release/refund states,
- *      and trust scores. Does NOT store raw text, files, images, or PII on-chain.
- */
+
+
+
+
+
+
 contract BlindHireEscrow is ReentrancyGuard, Ownable {
 
     enum ProjectStatus { Open, Assigned, InProgress, Disputed, Completed, Cancelled }
@@ -42,14 +42,14 @@ contract BlindHireEscrow is ReentrancyGuard, Ownable {
         string latestProfileCID;
     }
 
-    // Storage Mappings
+    
     uint256 public projectCount;
     mapping(uint256 => Project) public projects;
     mapping(uint256 => mapping(uint256 => Milestone)) public projectMilestones;
     mapping(address => UserReputation) public userReputations;
     mapping(uint256 => string) public projectReviewCIDs;
 
-    // Events
+    
     event ProfileCIDRegistered(address indexed user, string profileCID);
     event ProjectCreated(uint256 indexed projectId, address indexed client, string projectCID, uint256 totalBudgetWei, uint256 deadlineTimestamp);
     event FreelancerAccepted(uint256 indexed projectId, address indexed freelancer);
@@ -63,26 +63,26 @@ contract BlindHireEscrow is ReentrancyGuard, Ownable {
 
     constructor() Ownable(msg.sender) {}
 
-    // =============================================================
-    // PROFILE REGISTRATION
-    // =============================================================
+    
+    
+    
 
-    /**
-     * @notice Register or update a user's latest profile CID reference.
-     */
+    
+
+
     function registerProfileCID(string calldata profileCID) external {
         require(bytes(profileCID).length > 0, "Profile CID cannot be empty");
         userReputations[msg.sender].latestProfileCID = profileCID;
         emit ProfileCIDRegistered(msg.sender, profileCID);
     }
 
-    // =============================================================
-    // PROJECT CREATION & ESCROW DEPOSIT
-    // =============================================================
+    
+    
+    
 
-    /**
-     * @notice Client creates a project and deposits full ETH budget into contract escrow.
-     */
+    
+
+
     function createProject(
         string calldata projectCID,
         uint256 deadlineDays,
@@ -128,9 +128,9 @@ contract BlindHireEscrow is ReentrancyGuard, Ownable {
         return newProjectId;
     }
 
-    /**
-     * @notice Client accepts a freelancer for a project.
-     */
+    
+
+
     function acceptFreelancer(uint256 projectId, address freelancer) external {
         Project storage proj = projects[projectId];
         require(msg.sender == proj.client, "Only client can accept freelancer");
@@ -143,13 +143,13 @@ contract BlindHireEscrow is ReentrancyGuard, Ownable {
         emit FreelancerAccepted(projectId, freelancer);
     }
 
-    // =============================================================
-    // DELIVERABLE & MILESTONE PAYMENTS
-    // =============================================================
+    
+    
+    
 
-    /**
-     * @notice Freelancer uploads deliverable IPFS CID for a specific milestone.
-     */
+    
+
+
     function uploadDeliverableCID(uint256 projectId, uint256 milestoneIndex, string calldata deliverableCID) external {
         Project storage proj = projects[projectId];
         require(msg.sender == proj.freelancer, "Only assigned freelancer can upload deliverable");
@@ -166,9 +166,9 @@ contract BlindHireEscrow is ReentrancyGuard, Ownable {
         emit DeliverableSubmitted(projectId, milestoneIndex, deliverableCID);
     }
 
-    /**
-     * @notice Client approves and releases payment for a completed milestone.
-     */
+    
+
+
     function releaseMilestonePayment(uint256 projectId, uint256 milestoneIndex) external nonReentrant {
         Project storage proj = projects[projectId];
         require(msg.sender == proj.client, "Only client can release payment");
@@ -179,11 +179,11 @@ contract BlindHireEscrow is ReentrancyGuard, Ownable {
         require(!m.isPaid, "Milestone already paid");
         require(m.isCompleted, "Milestone deliverable not submitted");
 
-        // Checks-Effects-Interactions Pattern
+        
         m.isPaid = true;
         uint256 payoutWei = m.amountWei;
 
-        // Check if all milestones are completed
+        
         bool allPaid = true;
         for (uint256 i = 0; i < proj.milestoneCount; i++) {
             if (!projectMilestones[projectId][i].isPaid) {
@@ -205,13 +205,13 @@ contract BlindHireEscrow is ReentrancyGuard, Ownable {
         emit MilestonePaid(projectId, milestoneIndex, proj.freelancer, payoutWei);
     }
 
-    // =============================================================
-    // CANCELLATION & DISPUTE RESOLUTION
-    // =============================================================
+    
+    
+    
 
-    /**
-     * @notice Cancel project if open and no freelancer assigned yet. Refunds full deposit to client.
-     */
+    
+
+
     function cancelProject(uint256 projectId) external nonReentrant {
         Project storage proj = projects[projectId];
         require(msg.sender == proj.client, "Only client can cancel project");
@@ -226,9 +226,9 @@ contract BlindHireEscrow is ReentrancyGuard, Ownable {
         emit ProjectCancelled(projectId, proj.client, refundAmount);
     }
 
-    /**
-     * @notice Either client or freelancer can open a dispute.
-     */
+    
+
+
     function openDispute(uint256 projectId) external {
         Project storage proj = projects[projectId];
         require(msg.sender == proj.client || msg.sender == proj.freelancer, "Only participating client or freelancer can dispute");
@@ -238,9 +238,9 @@ contract BlindHireEscrow is ReentrancyGuard, Ownable {
         emit DisputeOpened(projectId, msg.sender);
     }
 
-    /**
-     * @notice Contract Owner (Arbitrator / AI Governance) resolves dispute by partitioning remaining escrow funds.
-     */
+    
+
+
     function resolveDispute(
         uint256 projectId,
         uint256 releaseToFreelancerWei,
@@ -249,7 +249,7 @@ contract BlindHireEscrow is ReentrancyGuard, Ownable {
         Project storage proj = projects[projectId];
         require(proj.status == ProjectStatus.Disputed, "Project is not in disputed state");
 
-        // Calculate unpaid balance remaining in escrow
+        
         uint256 remainingEscrowWei = 0;
         for (uint256 i = 0; i < proj.milestoneCount; i++) {
             if (!projectMilestones[projectId][i].isPaid) {
@@ -261,7 +261,7 @@ contract BlindHireEscrow is ReentrancyGuard, Ownable {
 
         proj.status = ProjectStatus.Completed;
 
-        // Execute transfers using Checks-Effects-Interactions
+        
         if (releaseToFreelancerWei > 0) {
             (bool successF, ) = payable(proj.freelancer).call{value: releaseToFreelancerWei}("");
             require(successF, "Freelancer dispute payout failed");
@@ -275,13 +275,13 @@ contract BlindHireEscrow is ReentrancyGuard, Ownable {
         emit DisputeResolved(projectId, releaseToFreelancerWei, refundToClientWei);
     }
 
-    // =============================================================
-    // REPUTATION & REVIEWS
-    // =============================================================
+    
+    
+    
 
-    /**
-     * @notice Submit a review CID and score (1 to 5) for a completed project.
-     */
+    
+
+
     function submitReview(
         uint256 projectId,
         address targetUser,
@@ -301,7 +301,7 @@ contract BlindHireEscrow is ReentrancyGuard, Ownable {
         emit ReviewSubmitted(projectId, msg.sender, targetUser, reviewCID, ratingScore);
     }
 
-    // Fallback & Receive
+    
     receive() external payable {
         revert("Direct ETH deposits not accepted. Use createProject()");
     }

@@ -28,7 +28,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [balanceEth, setBalanceEth] = useState<string>('0.0000');
   const [error, setError] = useState<string | null>(null);
 
-  // Restore stored session on mount
+  
   useEffect(() => {
     const { walletAddress: storedAddr, token: storedToken } = Web3AuthService.getStoredSession();
     const storedRole = localStorage.getItem('blindhire_user_role') as UserRole;

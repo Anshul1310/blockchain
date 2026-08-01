@@ -82,7 +82,7 @@ export interface ProposalItem {
 
 export interface AIMatchResult {
   freelancerWallet: string;
-  compatibilityScore: number; // 0 - 100
+  compatibilityScore: number; 
   keyMatchingSkills: string[];
   gapSkills: string[];
   recommendationReason: string;
@@ -90,7 +90,7 @@ export interface AIMatchResult {
 
 export interface AIScamReport {
   isSuspicious: boolean;
-  riskScore: number; // 0 - 100
+  riskScore: number; 
   flaggedKeywords: string[];
   analysisReasoning: string;
 }

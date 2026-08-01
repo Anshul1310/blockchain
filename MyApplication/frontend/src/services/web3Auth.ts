@@ -8,9 +8,9 @@ export interface AuthSession {
 }
 
 export class Web3AuthService {
-  /**
-   * Request account access from MetaMask via Ethers v6 BrowserProvider.
-   */
+  
+
+
   static async getBrowserProvider(): Promise<{ provider: ethers.BrowserProvider; signer: ethers.JsonRpcSigner; address: string }> {
     if (!window.ethereum) {
       throw new Error('MetaMask or Web3 wallet extension not detected.');
@@ -29,30 +29,30 @@ export class Web3AuthService {
     return { provider, signer, address };
   }
 
-  /**
-   * Fetch unique challenge nonce from backend for wallet.
-   */
+  
+
+
   static async getNonce(walletAddress: string): Promise<string> {
     const response = await api.get<{ walletAddress: string; nonce: string }>(`/auth/nonce?walletAddress=${walletAddress}`);
     return response.data.nonce;
   }
 
-  /**
-   * Complete WalletConnect/MetaMask authentication flow:
-   * Connect -> Get Nonce -> Sign Nonce -> Verify -> Store JWT -> Return Session
-   */
+  
+
+
+
   static async loginWithWallet(): Promise<AuthSession> {
     try {
-      // 1. Connect Wallet
+      
       const { provider, signer, address } = await this.getBrowserProvider();
 
-      // 2. Fetch challenge nonce from backend
+      
       const nonce = await this.getNonce(address);
 
-      // 3. Prompt user to sign nonce in MetaMask
+      
       const signature = await signer.signMessage(nonce);
 
-      // 4. Send signature to backend for verification & JWT issuance
+      
       const response = await api.post<{ token: string; walletAddress: string }>('/auth/verify', {
         walletAddress: address,
         signature,
@@ -60,11 +60,11 @@ export class Web3AuthService {
 
       const token = response.data.token;
 
-      // 5. Get ETH balance
+      
       const balanceWei = await provider.getBalance(address);
       const balanceEth = ethers.formatEther(balanceWei);
 
-      // 6. Store in localStorage
+      
       localStorage.setItem('blindhire_jwt_token', token);
       localStorage.setItem('blindhire_wallet_address', address);
 
@@ -79,17 +79,17 @@ export class Web3AuthService {
     }
   }
 
-  /**
-   * Clear wallet session tokens.
-   */
+  
+
+
   static logout(): void {
     localStorage.removeItem('blindhire_jwt_token');
     localStorage.removeItem('blindhire_wallet_address');
   }
 
-  /**
-   * Check if saved session exists in localStorage.
-   */
+  
+
+
   static getStoredSession(): { walletAddress: string | null; token: string | null } {
     return {
       walletAddress: localStorage.getItem('blindhire_wallet_address'),

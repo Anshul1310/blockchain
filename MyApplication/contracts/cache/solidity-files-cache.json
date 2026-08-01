@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "C:\\Users\\hunti\\OneDrive\\Documents\\GitHub\\blockchain\\MyApplication\\contracts\\contracts\\BlindHireEscrow.sol": {
-      "lastModificationDate": 1785579358315,
-      "contentHash": "5959c6d16a15071271f4d359cc31207b",
+      "lastModificationDate": 1785605130692,
+      "contentHash": "abf71ac2fbb847eaf52df204c8917166",
       "sourceName": "contracts/BlindHireEscrow.sol",
       "solcConfig": {
         "version": "0.8.24",

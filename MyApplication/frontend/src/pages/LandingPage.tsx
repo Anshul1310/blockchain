@@ -15,10 +15,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onConnectWallet, isCon
   return (
     <div className="space-y-24 py-12 px-4 max-w-7xl mx-auto">
       
-      {/* Hero Section */}
+      
       <section className="text-center space-y-8 pt-8">
         
-        {/* Network Badge */}
+        
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -29,7 +29,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onConnectWallet, isCon
           Live on Sepolia Testnet • IPFS Pinata Ready
         </motion.div>
 
-        {/* Hero Title */}
+        
         <motion.h1
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -39,7 +39,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onConnectWallet, isCon
           DeCentralized <span className="text-gradient-green">Blind Hiring</span> & Escrow Marketplace
         </motion.h1>
 
-        {/* Subtitle */}
+        
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -49,7 +49,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onConnectWallet, isCon
           Connect clients with developers strictly evaluated on verified code portfolios, IPFS artifacts, and smart contract escrow.
         </motion.p>
 
-        {/* Single Primary Action Button */}
+        
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -69,7 +69,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onConnectWallet, isCon
           )}
         </motion.div>
 
-        {/* Live AI Match Demo Preview Card */}
+        
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}

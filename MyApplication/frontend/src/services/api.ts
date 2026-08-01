@@ -7,7 +7,7 @@ export const api = axios.create({
   },
 });
 
-// Interceptor to attach Bearer JWT token from localStorage
+
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('blindhire_jwt_token');

@@ -30,21 +30,21 @@ export const ProjectDetailsPage: React.FC = () => {
   const [proposals, setProposals] = useState<ApplicantProposal[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Proposal Submission State for Freelancers
+  
   const [coverLetter, setCoverLetter] = useState('');
   const [requestedEth, setRequestedEth] = useState('');
   const [estimatedDays, setEstimatedDays] = useState('7');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [proposalSubmitted, setProposalSubmitted] = useState(false);
 
-  // Hiring / Booking State for Clients
+  
   const [acceptedProposalId, setAcceptedProposalId] = useState<string | null>(null);
   const [isHiring, setIsHiring] = useState(false);
 
   const fetchProjectAndProposals = async () => {
     setIsLoading(true);
     try {
-      // 1. Fetch Project
+      
       const projRes = await api.get<{ projects: ProjectItem[] }>('/projects');
       const found = projRes.data.projects?.find((p) => p.id === id);
       if (found) {
@@ -52,7 +52,7 @@ export const ProjectDetailsPage: React.FC = () => {
         setRequestedEth(found.budgetEth || '0.02');
       }
 
-      // 2. Fetch Applicants/Proposals for this project
+      
       const propRes = await api.get<{ proposals: ApplicantProposal[] }>(`/projects/${id}/proposals`);
       setProposals(propRes.data.proposals || []);
     } catch (err) {
@@ -83,7 +83,7 @@ export const ProjectDetailsPage: React.FC = () => {
       const response = await api.post<{ success: boolean; proposal: ApplicantProposal; cid: string }>('/proposals', payload);
       setProposalSubmitted(true);
       
-      // Refresh applicants list
+      
       fetchProjectAndProposals();
     } catch (err: any) {
       console.error('Proposal submission failed:', err);
@@ -147,7 +147,7 @@ export const ProjectDetailsPage: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        {/* Left Column: Project Overview & Applicants */}
+        
         <div className="lg:col-span-2 space-y-6">
           
           <Card className="space-y-6">
@@ -183,7 +183,7 @@ export const ProjectDetailsPage: React.FC = () => {
             )}
           </Card>
 
-          {/* CLIENT VIEW: Applicants List */}
+          
           {isClient && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -229,7 +229,7 @@ export const ProjectDetailsPage: React.FC = () => {
                         </p>
                       </div>
 
-                      {/* Action Buttons for Client */}
+                      
                       <div className="flex flex-wrap items-center gap-3 pt-2">
                         <Button
                           variant="secondary"
@@ -264,7 +264,7 @@ export const ProjectDetailsPage: React.FC = () => {
 
         </div>
 
-        {/* Right Column: Apply Form (FREELANCER VIEW ONLY) */}
+        
         <div className="space-y-6">
           <Card glow="purple" className="space-y-6">
             <div className="space-y-1 text-center border-b border-white/10 pb-4">

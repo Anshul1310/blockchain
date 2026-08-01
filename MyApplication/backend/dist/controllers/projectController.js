@@ -2,15 +2,9 @@ import { IPFSService } from '../services/ipfsService.js';
 import { DatabaseStorage } from '../services/dbStorage.js';
 import { BlockchainService } from '../services/blockchainService.js';
 export class ProjectController {
-    /**
-     * GET /api/projects
-     */
     static getProjects(req, res) {
         return res.json({ projects: DatabaseStorage.getProjects() });
     }
-    /**
-     * POST /api/projects
-     */
     static async createProject(req, res) {
         try {
             const projectPayload = req.body;
@@ -36,9 +30,6 @@ export class ProjectController {
             return res.status(500).json({ error: 'Failed to record project' });
         }
     }
-    /**
-     * POST /api/proposals
-     */
     static async submitProposal(req, res) {
         try {
             const proposalPayload = req.body;
@@ -67,9 +58,6 @@ export class ProjectController {
             return res.status(500).json({ error: 'Failed to submit proposal' });
         }
     }
-    /**
-     * GET /api/proposals
-     */
     static getProposals(req, res) {
         const { freelancer, projectId } = req.query;
         let result = [...DatabaseStorage.getProposals()];
@@ -82,17 +70,11 @@ export class ProjectController {
         }
         return res.json({ proposals: result });
     }
-    /**
-     * GET /api/projects/:id/proposals
-     */
     static getProjectProposals(req, res) {
         const { id } = req.params;
         const projectProposals = DatabaseStorage.getProposals().filter((p) => p.projectId === id);
         return res.json({ proposals: projectProposals });
     }
-    /**
-     * POST /api/proposals/:id/accept
-     */
     static acceptProposal(req, res) {
         const { id } = req.params;
         const proposal = DatabaseStorage.getProposals().find((p) => p.id === id);
@@ -129,9 +111,6 @@ export class ProjectController {
             message: `Order Booked! Escrow initialized for ${exactAmountEth} ETH between Client (${clientWallet}) and Freelancer (${proposal.freelancerWallet})`,
         });
     }
-    /**
-     * GET /api/escrows
-     */
     static getEscrows(req, res) {
         const { wallet } = req.query;
         const allEscrows = DatabaseStorage.getEscrows();
@@ -142,10 +121,6 @@ export class ProjectController {
         const matched = allEscrows.filter((e) => e.clientWallet.toLowerCase() === target || e.freelancerWallet.toLowerCase() === target);
         return res.json({ escrows: matched.length > 0 ? matched : allEscrows });
     }
-    /**
-     * POST /api/escrows/:id/deliver
-     * AUTOMATED PAYOUT: Submitting deliverable automatically transfers Sepolia ETH directly to Freelancer Wallet!
-     */
     static async submitEscrowDeliverable(req, res) {
         try {
             const { id } = req.params;
@@ -155,7 +130,6 @@ export class ProjectController {
                 return res.status(404).json({ error: 'Escrow contract not found' });
             }
             escrow.deliverableCid = deliverableCid;
-            // AUTOMATIC ON-CHAIN SEPOLIA ETH PAYOUT DISPATCH!
             const payoutResult = await BlockchainService.sendEthPayout(escrow.freelancerWallet, escrow.amountEth);
             escrow.status = 'completed';
             escrow.currentMilestone = 'Completed - Sepolia ETH Milestone Payment Automatically Released to Freelancer';
@@ -177,9 +151,6 @@ export class ProjectController {
             return res.status(500).json({ error: 'Failed to process deliverable and auto-payout' });
         }
     }
-    /**
-     * POST /api/escrows/:id/release
-     */
     static async releaseEscrowPayment(req, res) {
         try {
             const { id } = req.params;
@@ -208,9 +179,6 @@ export class ProjectController {
             return res.status(500).json({ error: 'Failed to release escrow payment' });
         }
     }
-    /**
-     * POST /api/messages
-     */
     static async sendMessage(req, res) {
         try {
             const { senderWallet, recipientWallet, text, encryptedCid } = req.body;
@@ -233,9 +201,6 @@ export class ProjectController {
             return res.status(500).json({ error: 'Failed to record chat message' });
         }
     }
-    /**
-     * GET /api/messages
-     */
     static getMessages(req, res) {
         const { wallet1, wallet2 } = req.query;
         const allMessages = DatabaseStorage.getMessages();
@@ -256,9 +221,6 @@ export class ProjectController {
         });
         return res.json({ messages: chatHistory });
     }
-    /**
-     * POST /api/reset or POST /api/purge
-     */
     static resetAllData(req, res) {
         DatabaseStorage.purge();
         IPFSService.purge();

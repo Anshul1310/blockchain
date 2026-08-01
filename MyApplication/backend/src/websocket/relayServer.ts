@@ -8,7 +8,7 @@ interface ClientConnection {
 
 export class WebSocketRelayServer {
   private wss: WebSocketServer;
-  private clients = new Map<WebSocket, string>(); // WebSocket -> walletAddress
+  private clients = new Map<WebSocket, string>(); 
 
   constructor(server: Server) {
     this.wss = new WebSocketServer({ server, path: '/ws' });
@@ -58,7 +58,7 @@ export class WebSocketRelayServer {
         const targetAddr = recipientWallet.toLowerCase();
         let delivered = false;
 
-        // Relay encrypted CID payload ONLY to the recipient's active WebSocket connection
+        
         for (const [clientWs, addr] of this.clients.entries()) {
           if (addr === targetAddr && clientWs.readyState === WebSocket.OPEN) {
             clientWs.send(
@@ -75,7 +75,7 @@ export class WebSocketRelayServer {
           }
         }
 
-        // Send confirmation receipt to sender
+        
         ws.send(
           JSON.stringify({
             type: 'relay_ack',

@@ -11,13 +11,13 @@ const IPFS_GATEWAYS = [
 const ipfsCache = new Map<string, any>();
 
 export class IPFSService {
-  /**
-   * Upload JSON object to Pinata Decentralized IPFS Storage and return IPFS CID.
-   */
+  
+
+
   static async uploadJSON(data: Record<string, any>): Promise<string> {
     const jsonString = JSON.stringify(data);
     
-    // Generate deterministic IPFS CID v0 fallback hash
+    
     const hash = crypto.createHash('sha256').update(jsonString).digest('hex');
     const fallbackCid = `Qm${hash.substring(0, 44)}`;
 
@@ -25,7 +25,7 @@ export class IPFSService {
     const pinataApiKey = env.PINATA_API_KEY || process.env.PINATA_API_KEY;
     const pinataSecretKey = env.PINATA_SECRET_API_KEY || process.env.PINATA_SECRET_API_KEY;
 
-    // 1. Try Pinata JWT Bearer Pinning
+    
     if (pinataJwt && pinataJwt.trim().length > 10) {
       try {
         const response = await fetch('https://api.pinata.cloud/pinning/pinJSONToIPFS', {
@@ -51,7 +51,7 @@ export class IPFSService {
       }
     }
 
-    // 2. Try Pinata API Key / Secret Pinning
+    
     if (pinataApiKey && pinataSecretKey) {
       try {
         const response = await fetch('https://api.pinata.cloud/pinning/pinJSONToIPFS', {
@@ -75,16 +75,16 @@ export class IPFSService {
       }
     }
 
-    // Fallback: Cache & return deterministic CID
+    
     ipfsCache.set(fallbackCid, data);
     console.log(`[IPFS] Local Gateway CID Generated & Cached: ${fallbackCid}`);
 
     return fallbackCid;
   }
 
-  /**
-   * Fetch JSON document from Decentralized IPFS Gateways by CID.
-   */
+  
+
+
   static async fetchJSON<T = any>(cid: string): Promise<T | null> {
     if (ipfsCache.has(cid)) {
       return ipfsCache.get(cid) as T;
@@ -101,7 +101,7 @@ export class IPFSService {
           return data;
         }
       } catch (err) {
-        // Try next gateway
+        
       }
     }
 
@@ -109,9 +109,9 @@ export class IPFSService {
     return null;
   }
 
-  /**
-   * Clear local CID cache
-   */
+  
+
+
   static purge() {
     ipfsCache.clear();
     console.log('[IPFS] Purged local IPFS CID cache.');

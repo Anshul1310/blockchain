@@ -41,7 +41,7 @@ export const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => 
           </button>
 
           {isConnected && walletAddress ? (
-            /* Connected Account View */
+            
             <div className="space-y-6 text-center pt-2">
               <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-purple-600 to-cyan-500 mx-auto flex items-center justify-center font-mono font-bold text-xl text-white shadow-glow-purple">
                 #{walletAddress.substring(2, 4)}
@@ -60,7 +60,7 @@ export const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => 
                 <p className="text-xs font-mono text-slate-400 break-all px-4">{walletAddress}</p>
               </div>
 
-              {/* Role Switcher */}
+              
               <div className="p-3 rounded-2xl glass-card bg-black/40 border border-white/10 space-y-2">
                 <span className="text-xs text-slate-400 block">Switch Mode</span>
                 <div className="grid grid-cols-2 gap-2">
@@ -105,7 +105,7 @@ export const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => 
               </Button>
             </div>
           ) : (
-            /* Role Selection & Wallet Connection View */
+            
             <div className="space-y-6">
               <div className="space-y-2 text-center">
                 <div className="w-12 h-12 rounded-xl bg-purple-500/20 text-purple-400 mx-auto flex items-center justify-center">
@@ -124,7 +124,7 @@ export const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => 
                 </div>
               )}
 
-              {/* Step 1: Select Role */}
+              
               <div className="space-y-2">
                 <label className="text-xs font-semibold text-white block">1. I am using BlindHire AI as:</label>
                 <div className="grid grid-cols-2 gap-3">
@@ -158,7 +158,7 @@ export const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => 
                 </div>
               </div>
 
-              {/* Step 2: Connect Wallet */}
+              
               <div className="space-y-3">
                 <label className="text-xs font-semibold text-white block">2. Connect Web3 Wallet:</label>
                 

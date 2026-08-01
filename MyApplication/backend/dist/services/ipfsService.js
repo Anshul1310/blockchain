@@ -8,18 +8,13 @@ const IPFS_GATEWAYS = [
 ];
 const ipfsCache = new Map();
 export class IPFSService {
-    /**
-     * Upload JSON object to Pinata Decentralized IPFS Storage and return IPFS CID.
-     */
     static async uploadJSON(data) {
         const jsonString = JSON.stringify(data);
-        // Generate deterministic IPFS CID v0 fallback hash
         const hash = crypto.createHash('sha256').update(jsonString).digest('hex');
         const fallbackCid = `Qm${hash.substring(0, 44)}`;
         const pinataJwt = env.PINATA_JWT || process.env.PINATA_JWT;
         const pinataApiKey = env.PINATA_API_KEY || process.env.PINATA_API_KEY;
         const pinataSecretKey = env.PINATA_SECRET_API_KEY || process.env.PINATA_SECRET_API_KEY;
-        // 1. Try Pinata JWT Bearer Pinning
         if (pinataJwt && pinataJwt.trim().length > 10) {
             try {
                 const response = await fetch('https://api.pinata.cloud/pinning/pinJSONToIPFS', {
@@ -45,7 +40,6 @@ export class IPFSService {
                 console.warn('[Pinata IPFS] Pinata JWT upload error:', pinErr);
             }
         }
-        // 2. Try Pinata API Key / Secret Pinning
         if (pinataApiKey && pinataSecretKey) {
             try {
                 const response = await fetch('https://api.pinata.cloud/pinning/pinJSONToIPFS', {
@@ -68,14 +62,10 @@ export class IPFSService {
                 console.warn('[Pinata IPFS] Pinata API Key upload error:', keyErr);
             }
         }
-        // Fallback: Cache & return deterministic CID
         ipfsCache.set(fallbackCid, data);
         console.log(`[IPFS] Local Gateway CID Generated & Cached: ${fallbackCid}`);
         return fallbackCid;
     }
-    /**
-     * Fetch JSON document from Decentralized IPFS Gateways by CID.
-     */
     static async fetchJSON(cid) {
         if (ipfsCache.has(cid)) {
             return ipfsCache.get(cid);
@@ -92,15 +82,11 @@ export class IPFSService {
                 }
             }
             catch (err) {
-                // Try next gateway
             }
         }
         console.warn(`[IPFS] CID ${cid} not resolved from public gateways yet.`);
         return null;
     }
-    /**
-     * Clear local CID cache
-     */
     static purge() {
         ipfsCache.clear();
         console.log('[IPFS] Purged local IPFS CID cache.');

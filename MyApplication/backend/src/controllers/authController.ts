@@ -8,9 +8,9 @@ export const signatureVerifySchema = z.object({
 });
 
 export class AuthController {
-  /**
-   * GET /api/auth/nonce?walletAddress=0x...
-   */
+  
+
+
   static getNonce(req: Request, res: Response) {
     const { walletAddress } = req.query;
 
@@ -22,9 +22,9 @@ export class AuthController {
     return res.json({ walletAddress, nonce });
   }
 
-  /**
-   * POST /api/auth/verify
-   */
+  
+
+
   static verifySignature(req: Request, res: Response) {
     const { walletAddress, signature } = req.body;
 

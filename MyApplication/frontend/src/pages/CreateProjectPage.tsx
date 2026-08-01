@@ -19,7 +19,7 @@ export const CreateProjectPage: React.FC = () => {
   const [isPosting, setIsPosting] = useState(false);
   const [createdCid, setCreatedCid] = useState<string | null>(null);
 
-  // Block Freelancers from creating jobs
+  
   if (userRole === 'freelancer') {
     return (
       <div className="max-w-2xl mx-auto px-4 py-16 text-center space-y-6">
@@ -159,7 +159,7 @@ export const CreateProjectPage: React.FC = () => {
               />
             </div>
 
-            {/* Skills Tag Picker */}
+            
             <div className="space-y-3">
               <label className="text-sm font-semibold text-white">Required Skills & Technologies</label>
               <div className="flex gap-2">
@@ -186,7 +186,7 @@ export const CreateProjectPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Budget & Deadline */}
+            
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-white">Total Budget (ETH)</label>

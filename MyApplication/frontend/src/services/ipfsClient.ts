@@ -12,10 +12,10 @@ const PUBLIC_IPFS_GATEWAYS = [
 ];
 
 export class IPFSClient {
-  /**
-   * Upload structured JSON payload (Profile, Project, Proposal, Deliverable) to IPFS.
-   * Returns IPFS CID hash (e.g. Qm...).
-   */
+  
+
+
+
   static async uploadJSON(data: Record<string, any>): Promise<string> {
     try {
       const response = await api.post<IPFSResponse>('/ipfs/upload', data);
@@ -29,22 +29,22 @@ export class IPFSClient {
     }
   }
 
-  /**
-   * Fetch JSON document from IPFS by CID reference.
-   * Queries backend relay & public decentralized IPFS HTTP Gateways.
-   */
+  
+
+
+
   static async fetchJSON<T = any>(cid: string): Promise<T> {
-    // 1. Try backend IPFS relay controller
+    
     try {
       const response = await api.get<{ cid: string; data: T }>(`/ipfs/${cid}`);
       if (response.data?.data) {
         return response.data.data;
       }
     } catch (err) {
-      // Fallback to public gateways below
+      
     }
 
-    // 2. Query public decentralized IPFS HTTP Gateways directly
+    
     for (const gatewayUrl of PUBLIC_IPFS_GATEWAYS) {
       try {
         const res = await fetch(`${gatewayUrl}${cid}`);
@@ -53,7 +53,7 @@ export class IPFSClient {
           return data as T;
         }
       } catch (e) {
-        // Try next gateway
+        
       }
     }
 

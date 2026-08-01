@@ -22,11 +22,11 @@ export const HomePage: React.FC = () => {
     const fetchFeedData = async () => {
       setIsLoading(true);
       try {
-        // Fetch Projects
+        
         const response = await api.get<{ projects: ProjectItem[] }>('/projects');
         setProjects(response.data.projects || []);
 
-        // Fetch Proposals submitted by current freelancer
+        
         if (walletAddress) {
           const propRes = await api.get<{ proposals: any[] }>(`/proposals?freelancer=${walletAddress}`);
           const ids = new Set((propRes.data.proposals || []).map((p: any) => p.projectId));
@@ -57,7 +57,7 @@ export const HomePage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 space-y-10 py-8">
       
-      {/* Hero Banner */}
+      
       <div className="glass-card p-8 sm:p-10 rounded-3xl border border-purple-500/30 bg-gradient-to-r from-purple-900/30 via-background-card to-cyan-950/20 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8 shadow-glow-purple">
         <div className="space-y-4 max-w-2xl text-left">
           <Badge variant="cyan" icon={<Sparkles className="w-3.5 h-3.5" />}>
@@ -80,7 +80,7 @@ export const HomePage: React.FC = () => {
         )}
       </div>
 
-      {/* Search & Skill Filter */}
+      
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row items-center gap-4">
           <div className="relative flex-1 w-full">
@@ -98,7 +98,7 @@ export const HomePage: React.FC = () => {
           </Button>
         </div>
 
-        {/* Skill Pills */}
+        
         <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
           {popularSkills.map((skill) => (
             <button
@@ -116,7 +116,7 @@ export const HomePage: React.FC = () => {
         </div>
       </div>
 
-      {/* Projects List Container */}
+      
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-heading font-bold text-white flex items-center gap-2">
@@ -162,7 +162,7 @@ export const HomePage: React.FC = () => {
                         Status: {project.status.toUpperCase()}
                       </Badge>
 
-                      {/* Display Applied Badge if user already applied */}
+                      
                       {hasApplied && (
                         <Badge variant="emerald" icon={<CheckCircle2 className="w-3.5 h-3.5" />}>
                           ✓ Proposal Submitted

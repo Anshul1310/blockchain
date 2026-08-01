@@ -1,12 +1,12 @@
 export class EncryptionService {
-  /**
-   * Encrypt a string using Web Crypto API (AES-GCM 256-bit) with secret key.
-   */
+  
+
+
   static async encryptMessage(plaintext: string, secretPassphrase: string): Promise<{ ciphertextBase64: string; ivBase64: string }> {
     const encoder = new TextEncoder();
     const data = encoder.encode(plaintext);
 
-    // Derive AES-GCM Key from Passphrase
+    
     const keyMaterial = await window.crypto.subtle.importKey(
       'raw',
       encoder.encode(secretPassphrase),
@@ -42,9 +42,9 @@ export class EncryptionService {
     };
   }
 
-  /**
-   * Decrypt AES-GCM 256-bit ciphertext back to plaintext.
-   */
+  
+
+
   static async decryptMessage(ciphertextBase64: string, ivBase64: string, secretPassphrase: string): Promise<string> {
     const encoder = new TextEncoder();
     const decoder = new TextDecoder();

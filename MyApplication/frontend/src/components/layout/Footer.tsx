@@ -8,7 +8,7 @@ export const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
           
-          {/* Col 1: Brand */}
+          
           <div className="space-y-4 md:col-span-1">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-lg bg-gradient-to-tr from-purple-600 to-cyan-500 p-0.5 flex items-center justify-center">
@@ -25,7 +25,7 @@ export const Footer: React.FC = () => {
             </p>
           </div>
 
-          {/* Col 2: Platform Links */}
+          
           <div>
             <h4 className="font-heading font-semibold text-sm text-white uppercase tracking-wider mb-4">
               Marketplace
@@ -38,7 +38,7 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Col 3: Privacy & Tech */}
+          
           <div>
             <h4 className="font-heading font-semibold text-sm text-white uppercase tracking-wider mb-4">
               Security Stack
@@ -56,7 +56,7 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Col 4: Network Status */}
+          
           <div>
             <h4 className="font-heading font-semibold text-sm text-white uppercase tracking-wider mb-4">
               Network Status

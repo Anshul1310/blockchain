@@ -31,7 +31,7 @@ export function useWebSocket(targetRecipientWallet?: string, projectId: string =
     ws.onopen = () => {
       console.log('[WebSocket Client] Connected to E2E Relay');
       setIsWebSocketConnected(true);
-      // Register active wallet session
+      
       ws.send(JSON.stringify({ action: 'register', walletAddress }));
     };
 
@@ -42,10 +42,10 @@ export function useWebSocket(targetRecipientWallet?: string, projectId: string =
         if (payload.type === 'encrypted_message') {
           const { senderWallet, encryptedCid, timestamp } = payload;
 
-          // Fetch encrypted payload JSON from IPFS
+          
           const ipfsData = await IPFSClient.fetchJSON<{ ciphertextBase64: string; ivBase64: string }>(encryptedCid);
 
-          // Decrypt locally using Web Crypto API
+          
           const plaintext = await EncryptionService.decryptMessage(
             ipfsData.ciphertextBase64,
             ipfsData.ivBase64,
@@ -79,9 +79,9 @@ export function useWebSocket(targetRecipientWallet?: string, projectId: string =
     };
   }, [isConnected, walletAddress, projectId]);
 
-  /**
-   * Encrypt message -> Upload to IPFS -> Send CID over WebSocket
-   */
+  
+
+
   const sendEncryptedMessage = useCallback(
     async (plaintext: string, recipientWallet: string) => {
       if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
@@ -89,13 +89,13 @@ export function useWebSocket(targetRecipientWallet?: string, projectId: string =
       }
       if (!walletAddress) throw new Error('Wallet not connected.');
 
-      // 1. Encrypt message locally
+      
       const { ciphertextBase64, ivBase64 } = await EncryptionService.encryptMessage(plaintext, sharedPassphrase);
 
-      // 2. Upload encrypted payload to IPFS
+      
       const encryptedCid = await IPFSClient.uploadJSON({ ciphertextBase64, ivBase64, sender: walletAddress });
 
-      // 3. Relay CID through WebSocket
+      
       wsRef.current.send(
         JSON.stringify({
           action: 'relay_encrypted_cid',
@@ -106,7 +106,7 @@ export function useWebSocket(targetRecipientWallet?: string, projectId: string =
         })
       );
 
-      // Optimistically append to local message list
+      
       const selfMsg: DecryptedChatMessage = {
         id: `msg-${Date.now()}`,
         senderWallet: walletAddress,

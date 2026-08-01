@@ -39,12 +39,12 @@ export const MessagesPage: React.FC = () => {
 
   const { messages: liveWsMessages, isWebSocketConnected, sendEncryptedMessage } = useWebSocket(activeRecipient);
 
-  // Fetch all chat messages for current wallet & active recipient
+  
   const fetchMessagesAndThreads = async () => {
     if (!walletAddress && !activeRecipient) return;
 
     try {
-      // 1. Fetch messages between current wallet and active recipient
+      
       const currentWallet = walletAddress || '0x10429d68A7677F20e3C5181707AfC438Ac896DDa';
       const response = await api.get<{ messages: StoredMessage[] }>(
         `/messages?wallet1=${currentWallet}&wallet2=${activeRecipient}`
@@ -52,7 +52,7 @@ export const MessagesPage: React.FC = () => {
 
       setChatHistory(response.data.messages || []);
 
-      // 2. Fetch all messages for current wallet to populate sidebar threads
+      
       const allRes = await api.get<{ messages: StoredMessage[] }>(`/messages?wallet1=${currentWallet}`);
       const allMsgs = allRes.data.messages || [];
 
@@ -73,7 +73,7 @@ export const MessagesPage: React.FC = () => {
         }
       });
 
-      // Ensure activeRecipient & URL recipient are in sidebar threads
+      
       [activeRecipient, recipientFromUrl].forEach((addr) => {
         if (addr && !threadMap.has(addr.toLowerCase())) {
           threadMap.set(addr.toLowerCase(), {
@@ -92,7 +92,7 @@ export const MessagesPage: React.FC = () => {
 
   useEffect(() => {
     fetchMessagesAndThreads();
-    const interval = setInterval(fetchMessagesAndThreads, 3000); // Polling sync
+    const interval = setInterval(fetchMessagesAndThreads, 3000); 
     return () => clearInterval(interval);
   }, [walletAddress, activeRecipient, recipientFromUrl]);
 
@@ -106,7 +106,7 @@ export const MessagesPage: React.FC = () => {
     const currentWallet = walletAddress || '0x10429d68A7677F20e3C5181707AfC438Ac896DDa';
 
     try {
-      // 1. Post message to backend storage
+      
       await api.post('/messages', {
         senderWallet: currentWallet,
         recipientWallet: activeRecipient,
@@ -114,10 +114,10 @@ export const MessagesPage: React.FC = () => {
         encryptedCid: `QmEnc${Date.now()}`,
       });
 
-      // 2. Broadcast over WebSocket
+      
       await sendEncryptedMessage(textToSend, activeRecipient);
 
-      // 3. Immediately refresh feed
+      
       fetchMessagesAndThreads();
     } catch (err) {
       console.error('Failed to send message:', err);
@@ -136,7 +136,7 @@ export const MessagesPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
       
-      {/* Header Banner */}
+      
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
         <div>
           <Badge variant="purple" icon={<Lock className="w-3.5 h-3.5" />}>
@@ -149,10 +149,10 @@ export const MessagesPage: React.FC = () => {
         </Badge>
       </div>
 
-      {/* WhatsApp Layout Grid */}
+      
       <Card className="p-0 overflow-hidden border border-white/10 grid grid-cols-1 md:grid-cols-12 h-[650px] bg-[#0A0E18]">
         
-        {/* Left Sidebar: Conversations */}
+        
         <div className="md:col-span-4 border-r border-white/10 flex flex-col bg-[#080B13]">
           
           <div className="p-4 border-b border-white/10 space-y-3">
@@ -202,7 +202,7 @@ export const MessagesPage: React.FC = () => {
 
         </div>
 
-        {/* Right Main Chat Panel */}
+        
         <div className="md:col-span-8 flex flex-col h-full bg-[#0B101D]">
           
           <div className="p-4 border-b border-white/10 flex items-center justify-between bg-black/30">
@@ -219,7 +219,7 @@ export const MessagesPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Chat Feed */}
+          
           <div className="flex-1 p-6 overflow-y-auto space-y-4">
             {chatHistory.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center space-y-3">
@@ -261,7 +261,7 @@ export const MessagesPage: React.FC = () => {
             )}
           </div>
 
-          {/* Input Bar */}
+          
           <form onSubmit={handleSendMessage} className="p-4 border-t border-white/10 bg-black/40 flex gap-3">
             <input
               type="text"

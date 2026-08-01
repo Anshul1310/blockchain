@@ -28,7 +28,7 @@ describe('BlindHireEscrow Smart Contract Unit Tests', function () {
 
   it('Should create project with milestone ETH escrow deposits', async function () {
     const projectCid = 'QmProj101CID';
-    const milestoneAmounts = [ethers.parseEther('1.0'), ethers.parseEther('0.5')]; // Total 1.5 ETH
+    const milestoneAmounts = [ethers.parseEther('1.0'), ethers.parseEther('0.5')]; 
     const totalDeposit = ethers.parseEther('1.5');
 
     await expect(
@@ -51,13 +51,13 @@ describe('BlindHireEscrow Smart Contract Unit Tests', function () {
       .connect(client)
       .createProject('QmProj101CID', 14, milestoneAmounts, { value: ethers.parseEther('1.0') });
 
-    // Accept Freelancer
+    
     await escrowContract.connect(client).acceptFreelancer(1, freelancer.address);
 
-    // Freelancer uploads deliverable CID
+    
     await escrowContract.connect(freelancer).uploadDeliverableCID(1, 0, 'QmDeliverableCID1');
 
-    // Client releases payment
+    
     const initBalance = await ethers.provider.getBalance(freelancer.address);
     await escrowContract.connect(client).releaseMilestonePayment(1, 0);
     const finalBalance = await ethers.provider.getBalance(freelancer.address);

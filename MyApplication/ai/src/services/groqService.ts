@@ -3,7 +3,7 @@ dotenv.config();
 
 export interface CandidateEvaluation {
   freelancerWallet: string;
-  compatibilityScore: number; // 0 - 100
+  compatibilityScore: number; 
   matchingSkills: string[];
   missingSkills: string[];
   recommendationReason: string;
@@ -11,7 +11,7 @@ export interface CandidateEvaluation {
 
 export interface ScamAnalysisResult {
   isSuspicious: boolean;
-  riskScore: number; // 0 - 100
+  riskScore: number; 
   flaggedKeywords: string[];
   analysisReasoning: string;
 }
@@ -27,13 +27,13 @@ export class GroqAIService {
   private static apiUrl = 'https://api.groq.com/openai/v1/chat/completions';
   private static model = 'llama3-8b-8192';
 
-  /**
-   * Send structured JSON prompt to Groq LLM API.
-   */
+  
+
+
   private static async queryGroq<T>(systemPrompt: string, userPrompt: string): Promise<T> {
     try {
       if (!this.apiKey || this.apiKey.startsWith('gsk_demo')) {
-        // Safe structured fallback if demo key
+        
         return this.getFallbackMock<T>(systemPrompt, userPrompt);
       }
 
@@ -63,9 +63,9 @@ export class GroqAIService {
     }
   }
 
-  /**
-   * 1. Extract required skills from project description.
-   */
+  
+
+
   static async extractSkills(description: string): Promise<string[]> {
     const systemPrompt = `You are an expert technical talent recruiter. Parse the project description and extract a JSON object containing an array of technical skills under key "skills". Return ONLY valid JSON.`;
     const userPrompt = `Project Description:\n${description}`;
@@ -74,9 +74,9 @@ export class GroqAIService {
     return res.skills || ['Solidity', 'TypeScript', 'React 19'];
   }
 
-  /**
-   * 2. Rank candidates based on project specifications.
-   */
+  
+
+
   static async rankCandidates(
     projectSpec: { title: string; description: string; requiredSkills: string[] },
     freelancers: { walletAddress: string; skills: string[]; bio: string }[]
@@ -94,9 +94,9 @@ export class GroqAIService {
     }));
   }
 
-  /**
-   * 3. Detect scam or spam proposal patterns.
-   */
+  
+
+
   static async detectScam(proposalText: string, budgetEth: string): Promise<ScamAnalysisResult> {
     const systemPrompt = `Analyze proposal text for scam, off-platform payment attempts, phishing, or spam keywords. Output JSON format: { "isSuspicious": boolean, "riskScore": number (0-100), "flaggedKeywords": string[], "analysisReasoning": string }`;
     const userPrompt = `Proposal Text: "${proposalText}"\nRequested Budget: ${budgetEth} ETH`;
@@ -104,9 +104,9 @@ export class GroqAIService {
     return this.queryGroq<ScamAnalysisResult>(systemPrompt, userPrompt);
   }
 
-  /**
-   * 4. Summarize milestone dispute and recommend fair resolution.
-   */
+  
+
+
   static async summarizeDispute(
     projectTitle: string,
     deliverableCid: string,

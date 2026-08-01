@@ -1,7 +1,7 @@
 import { WebSocketServer, WebSocket } from 'ws';
 export class WebSocketRelayServer {
     wss;
-    clients = new Map(); // WebSocket -> walletAddress
+    clients = new Map();
     constructor(server) {
         this.wss = new WebSocketServer({ server, path: '/ws' });
         this.wss.on('connection', (ws) => {
@@ -43,7 +43,6 @@ export class WebSocketRelayServer {
                 }
                 const targetAddr = recipientWallet.toLowerCase();
                 let delivered = false;
-                // Relay encrypted CID payload ONLY to the recipient's active WebSocket connection
                 for (const [clientWs, addr] of this.clients.entries()) {
                     if (addr === targetAddr && clientWs.readyState === WebSocket.OPEN) {
                         clientWs.send(JSON.stringify({
@@ -57,7 +56,6 @@ export class WebSocketRelayServer {
                         console.log(`[WebSocket] Relayed encrypted CID ${encryptedCid} to ${targetAddr}`);
                     }
                 }
-                // Send confirmation receipt to sender
                 ws.send(JSON.stringify({
                     type: 'relay_ack',
                     encryptedCid,

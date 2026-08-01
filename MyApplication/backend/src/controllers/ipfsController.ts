@@ -2,9 +2,9 @@ import { Request, Response } from 'express';
 import { IPFSService } from '../services/ipfsService.js';
 
 export class IPFSController {
-  /**
-   * POST /api/ipfs/upload
-   */
+  
+
+
   static async uploadJSON(req: Request, res: Response) {
     try {
       const payload = req.body;
@@ -20,9 +20,9 @@ export class IPFSController {
     }
   }
 
-  /**
-   * GET /api/ipfs/:cid
-   */
+  
+
+
   static async getJSON(req: Request, res: Response) {
     try {
       const { cid } = req.params;

@@ -1,8 +1,5 @@
 import { IPFSService } from '../services/ipfsService.js';
 export class IPFSController {
-    /**
-     * POST /api/ipfs/upload
-     */
     static async uploadJSON(req, res) {
         try {
             const payload = req.body;
@@ -17,9 +14,6 @@ export class IPFSController {
             return res.status(500).json({ error: 'Failed to upload JSON to IPFS' });
         }
     }
-    /**
-     * GET /api/ipfs/:cid
-     */
     static async getJSON(req, res) {
         try {
             const { cid } = req.params;

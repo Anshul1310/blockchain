@@ -34,11 +34,11 @@ export const DashboardPage: React.FC = () => {
     try {
       const currentWallet = walletAddress || '0x10429d68A7677F20e3C5181707AfC438Ac896DDa';
 
-      // 1. Fetch Projects
+      
       const projRes = await api.get<{ projects: ProjectItem[] }>('/projects');
       setProjects(projRes.data.projects || []);
 
-      // 2. Fetch Escrow Contracts for active wallet
+      
       const escrowRes = await api.get<{ escrows: EscrowContract[] }>(`/escrows?wallet=${currentWallet}`);
       setEscrows(escrowRes.data.escrows || []);
     } catch (err) {
@@ -64,7 +64,7 @@ export const DashboardPage: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
       
-      {/* Header */}
+      
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
         <div>
           <Badge variant="purple" className="mb-2">
@@ -82,7 +82,7 @@ export const DashboardPage: React.FC = () => {
         )}
       </div>
 
-      {/* Tabs */}
+      
       <div className="flex border-b border-white/10 gap-4">
         <button
           onClick={() => setActiveTab('escrows')}
@@ -106,7 +106,7 @@ export const DashboardPage: React.FC = () => {
         </button>
       </div>
 
-      {/* Tab Content */}
+      
       {isLoading ? (
         <div className="py-12 text-center space-y-3">
           <Loader2 className="w-8 h-8 animate-spin text-purple-400 mx-auto" />

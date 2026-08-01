@@ -161,7 +161,7 @@ export const EscrowPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Milestone Progress */}
+                
                 <div className="p-4 rounded-xl glass-card bg-black/40 border border-white/10 space-y-1">
                   <span className="text-[11px] text-slate-400 block font-mono">Current Milestone Step</span>
                   <p className="text-sm font-semibold text-cyan-300">{escrow.currentMilestone}</p>
@@ -172,7 +172,7 @@ export const EscrowPage: React.FC = () => {
                   )}
                 </div>
 
-                {/* FREELANCER STEP: Deliver Work */}
+                
                 {userRole === 'freelancer' && !isCompleted && (
                   <form onSubmit={(e) => handleDeliverWork(e, escrow.id)} className="space-y-3 border-t border-white/10 pt-4">
                     <label className="text-xs font-semibold text-white block">
@@ -192,7 +192,7 @@ export const EscrowPage: React.FC = () => {
                   </form>
                 )}
 
-                {/* CLIENT STEP: Approve Deliverable & Release ETH */}
+                
                 {userRole === 'client' && !isCompleted && (
                   <div className="border-t border-white/10 pt-4 space-y-3">
                     {isDelivered ? (
@@ -216,7 +216,7 @@ export const EscrowPage: React.FC = () => {
                   </div>
                 )}
 
-                {/* COMPLETED BANNER WITH SEPOLIA ETHERSCAN LINK */}
+                
                 {isCompleted && (
                   <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-center space-y-2">
                     <div className="flex items-center justify-center gap-2 text-emerald-400 font-bold text-sm">

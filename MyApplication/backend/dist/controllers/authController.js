@@ -5,9 +5,6 @@ export const signatureVerifySchema = z.object({
     signature: z.string().min(10, 'Invalid signature'),
 });
 export class AuthController {
-    /**
-     * GET /api/auth/nonce?walletAddress=0x...
-     */
     static getNonce(req, res) {
         const { walletAddress } = req.query;
         if (!walletAddress || typeof walletAddress !== 'string') {
@@ -16,9 +13,6 @@ export class AuthController {
         const nonce = AuthService.generateNonce(walletAddress);
         return res.json({ walletAddress, nonce });
     }
-    /**
-     * POST /api/auth/verify
-     */
     static verifySignature(req, res) {
         const { walletAddress, signature } = req.body;
         const result = AuthService.verifySignature(walletAddress, signature);

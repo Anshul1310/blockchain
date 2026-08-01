@@ -4,16 +4,16 @@ import { DatabaseStorage } from '../services/dbStorage.js';
 import { BlockchainService } from '../services/blockchainService.js';
 
 export class ProjectController {
-  /**
-   * GET /api/projects
-   */
+  
+
+
   static getProjects(req: Request, res: Response) {
     return res.json({ projects: DatabaseStorage.getProjects() });
   }
 
-  /**
-   * POST /api/projects
-   */
+  
+
+
   static async createProject(req: Request, res: Response) {
     try {
       const projectPayload = req.body;
@@ -43,9 +43,9 @@ export class ProjectController {
     }
   }
 
-  /**
-   * POST /api/proposals
-   */
+  
+
+
   static async submitProposal(req: Request, res: Response) {
     try {
       const proposalPayload = req.body;
@@ -79,9 +79,9 @@ export class ProjectController {
     }
   }
 
-  /**
-   * GET /api/proposals
-   */
+  
+
+
   static getProposals(req: Request, res: Response) {
     const { freelancer, projectId } = req.query;
 
@@ -99,18 +99,18 @@ export class ProjectController {
     return res.json({ proposals: result });
   }
 
-  /**
-   * GET /api/projects/:id/proposals
-   */
+  
+
+
   static getProjectProposals(req: Request, res: Response) {
     const { id } = req.params;
     const projectProposals = DatabaseStorage.getProposals().filter((p) => p.projectId === id);
     return res.json({ proposals: projectProposals });
   }
 
-  /**
-   * POST /api/proposals/:id/accept
-   */
+  
+
+
   static acceptProposal(req: Request, res: Response) {
     const { id } = req.params;
     const proposal = DatabaseStorage.getProposals().find((p) => p.id === id);
@@ -155,9 +155,9 @@ export class ProjectController {
     });
   }
 
-  /**
-   * GET /api/escrows
-   */
+  
+
+
   static getEscrows(req: Request, res: Response) {
     const { wallet } = req.query;
     const allEscrows = DatabaseStorage.getEscrows();
@@ -175,10 +175,10 @@ export class ProjectController {
     return res.json({ escrows: matched.length > 0 ? matched : allEscrows });
   }
 
-  /**
-   * POST /api/escrows/:id/deliver
-   * AUTOMATED PAYOUT: Submitting deliverable automatically transfers Sepolia ETH directly to Freelancer Wallet!
-   */
+  
+
+
+
   static async submitEscrowDeliverable(req: Request, res: Response) {
     try {
       const { id } = req.params;
@@ -192,7 +192,7 @@ export class ProjectController {
 
       escrow.deliverableCid = deliverableCid;
 
-      // AUTOMATIC ON-CHAIN SEPOLIA ETH PAYOUT DISPATCH!
+      
       const payoutResult = await BlockchainService.sendEthPayout(escrow.freelancerWallet, escrow.amountEth);
 
       escrow.status = 'completed';
@@ -218,9 +218,9 @@ export class ProjectController {
     }
   }
 
-  /**
-   * POST /api/escrows/:id/release
-   */
+  
+
+
   static async releaseEscrowPayment(req: Request, res: Response) {
     try {
       const { id } = req.params;
@@ -255,9 +255,9 @@ export class ProjectController {
     }
   }
 
-  /**
-   * POST /api/messages
-   */
+  
+
+
   static async sendMessage(req: Request, res: Response) {
     try {
       const { senderWallet, recipientWallet, text, encryptedCid } = req.body;
@@ -284,9 +284,9 @@ export class ProjectController {
     }
   }
 
-  /**
-   * GET /api/messages
-   */
+  
+
+
   static getMessages(req: Request, res: Response) {
     const { wallet1, wallet2 } = req.query;
 
@@ -316,9 +316,9 @@ export class ProjectController {
     return res.json({ messages: chatHistory });
   }
 
-  /**
-   * POST /api/reset or POST /api/purge
-   */
+  
+
+
   static resetAllData(req: Request, res: Response) {
     DatabaseStorage.purge();
     IPFSService.purge();

@@ -20,7 +20,7 @@
   }
 }
 
-/* Modern Professional Clean Marketplace Cards */
+
 .glass-card {
   background: rgba(30, 41, 59, 0.75);
   backdrop-filter: blur(16px);
@@ -43,7 +43,7 @@
   transform: translateY(-2px);
 }
 
-/* Clean Professional Gradient Text Utilities */
+
 .text-gradient-green {
   background: linear-gradient(135deg, #34D399 0%, #10B981 50%, #059669 100%);
   -webkit-background-clip: text;
@@ -62,7 +62,7 @@
   -webkit-text-fill-color: transparent;
 }
 
-/* Clean Accent Borders */
+
 .border-glow-emerald {
   border: 1px solid rgba(16, 185, 129, 0.5);
   box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
@@ -73,7 +73,7 @@
   box-shadow: 0 0 15px rgba(37, 99, 235, 0.2);
 }
 
-/* Custom Scrollbar */
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;

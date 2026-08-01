@@ -5,19 +5,11 @@ export class DatabaseStorage {
         messages: [],
         escrows: [],
     };
-    /**
-     * Initialize in-memory store (No file storage)
-     */
     static init() {
         console.log(`[DatabaseStorage] Pure In-Memory Store Initialized (No local file storage).`);
     }
-    /**
-     * No-op save (No file storage on disk)
-     */
     static save() {
-        // Pure in-memory mode: no disk file operations
     }
-    // Getters
     static getProjects() {
         return DatabaseStorage.data.projects;
     }
@@ -30,7 +22,6 @@ export class DatabaseStorage {
     static getEscrows() {
         return DatabaseStorage.data.escrows;
     }
-    // Mutators
     static addProject(project) {
         DatabaseStorage.data.projects.unshift(project);
     }

@@ -51,11 +51,11 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
         createdAt: Date.now(),
       };
 
-      // 1. Pin Profile JSON to IPFS (100% Free, 0 ETH)
+      
       const cid = await IPFSClient.uploadJSON(profileJSON);
       setSavedCid(cid);
 
-      // 2. Register Profile CID on Sepolia Smart Contract ONLY if user checked the option
+      
       if (registerOnChain) {
         await registerProfileCID(cid);
       }
@@ -127,7 +127,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
                 />
               </div>
 
-              {/* Skills Editor */}
+              
               <div className="space-y-2">
                 <label className="text-xs font-semibold text-white">Verified Skills Matrix</label>
                 <div className="flex gap-2">
@@ -152,7 +152,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
                 </div>
               </div>
 
-              {/* Optional On-Chain Checkbox */}
+              
               <div className="flex items-center gap-2 pt-2 border-t border-white/10">
                 <input
                   type="checkbox"
